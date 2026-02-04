@@ -25,3 +25,5 @@ merge_emails.py
 # Other
 .DS_Store
 *.log
+github_setup.sh
+README_STUDENT_APP.md
