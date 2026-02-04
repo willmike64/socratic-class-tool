@@ -1,0 +1,27 @@
+# Secrets and credentials
+.streamlit/secrets.toml
+.streamlit/firebase_credentials.json
+.streamlit/*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Backup files
+*_backup.py
+*_v2.py
+socratic_opportunity_streamlit_app.py
+student_learning_app.py
+extract_emails.py
+merge_emails.py
+
+# Other
+.DS_Store
+*.log
