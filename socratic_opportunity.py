@@ -978,7 +978,7 @@ elif page == "Answer Key":
 
 elif page == "Student Dashboard":
     st.title("Student Dashboard")
-    if st.session_state.user_email != "michael.williams@wisc.edu":
+    if st.session_state.user_email not in ["michael.williams@wisc.edu", "mwill1003@gmail.com"]:
         st.warning("This page is only available to the course instructor.")
     else:
         st.caption("View all student progress and responses")
