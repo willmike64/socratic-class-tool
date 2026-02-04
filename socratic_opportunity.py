@@ -859,13 +859,34 @@ elif page == "Instructor Script":
 
 elif page == "Student Worksheet":
     st.title("Student Worksheet — Opportunity Discovery Sprint")
-    st.caption("A lightweight worksheet aligned to the six behaviors. Use as an in-class activity or homework template.")
+    
+    st.markdown("""
+    This worksheet helps you systematically evaluate an entrepreneurial opportunity using the six key behaviors 
+    from the reading. Whether you're developing your own venture idea or analyzing an existing company's approach, 
+    this framework will guide you through identifying assumptions, testing hypotheses, and building a concrete action plan.
+    
+    **Choose your focus below, then complete the worksheet.**
+    """)
+    
+    worksheet_type = st.radio(
+        "What are you working on?",
+        ["This is my own venture idea", "I am analyzing an existing company"],
+        horizontal=True
+    )
+    
+    st.divider()
 
     with st.form("worksheet"):
-        st.subheader("1) Opportunity hypothesis")
-        customer = st.text_input("Target customer (be specific):", placeholder="e.g., 1st-year grad students in Madison who...")
-        problem = st.text_area("Problem / frustration:", height=80, placeholder="What is painful? When does it happen? Why does it matter?")
-        workaround = st.text_area("Current workarounds / alternatives:", height=80, placeholder="How do they solve it today (including 'do nothing')?")
+        if worksheet_type == "This is my own venture idea":
+            st.subheader("1) Opportunity hypothesis")
+            customer = st.text_input("Target customer (be specific):", placeholder="e.g., 1st-year grad students in Madison who...")
+            problem = st.text_area("Problem / frustration:", height=80, placeholder="What is painful? When does it happen? Why does it matter?")
+            workaround = st.text_area("Current workarounds / alternatives:", height=80, placeholder="How do they solve it today (including 'do nothing')?")
+        else:
+            st.subheader("1) Company & Opportunity Analysis")
+            customer = st.text_input("Company name & target customer:", placeholder="e.g., Airbnb - travelers seeking affordable, local accommodations")
+            problem = st.text_area("Problem / opportunity they addressed:", height=80, placeholder="What problem did they identify? Why did it matter?")
+            workaround = st.text_area("What existed before (alternatives/workarounds):", height=80, placeholder="How did customers solve this before the company existed?")
 
         st.subheader("2) Your riskiest assumptions (ranked)")
         a1 = st.text_input("Assumption #1 (highest risk):", placeholder="e.g., People will pay $X/month to avoid Y")
