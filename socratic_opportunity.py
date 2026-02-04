@@ -722,7 +722,9 @@ def get_question_by_idx(idx: int) -> Dict:
 st.sidebar.title("💡 Socratic Class Tool")
 st.sidebar.caption(f"Logged in as: {st.session_state.user_email}")
 
-with open('/Users/michaelwilliams/Library/Mobile Documents/com~apple~CloudDocs/SchoolFiles/Articles/Start_of_The_Start.pdf', 'rb') as f:
+import os
+
+with open(os.path.join(os.path.dirname(__file__), 'Start_of_The_Start.pdf'), 'rb') as f:
     pdf_data = f.read()
 st.sidebar.download_button("📄 Download Article (PDF)", pdf_data, "Start_of_The_Start.pdf", "application/pdf", use_container_width=True)
 
