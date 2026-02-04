@@ -732,7 +732,7 @@ is_instructor = st.session_state.get("is_instructor", False)
 
 if is_instructor:
     mode = st.sidebar.radio("Mode", ["Student", "Instructor"], index=1)
-    page = st.sidebar.radio("Go to", ["Socratic Flow", "Instructor Script", "Student Worksheet", "Instructor Guide", "Answer Key"], index=0)
+    page = st.sidebar.radio("Go to", ["Socratic Flow", "Instructor Script", "Student Worksheet", "Instructor Guide", "Answer Key", "Student Dashboard"], index=0)
 else:
     mode = "Student"
     page = st.sidebar.radio("Go to", ["Socratic Flow", "Student Worksheet"], index=0)
@@ -960,6 +960,41 @@ elif page == "Answer Key":
     else:
         st.markdown(ANSWER_KEY_MD)
         md_download_button("Download Answer Key (Markdown)", ANSWER_KEY_MD, "answer_key.md")
+
+
+elif page == "Student Dashboard":
+    st.title("Student Dashboard")
+    if not is_instructor:
+        st.warning("This page is only available to instructors.")
+    else:
+        st.caption("View all student progress and responses")
+        
+        students = db.collection("students").stream()
+        student_data = []
+        for doc in students:
+            data = doc.to_dict()
+            data["email"] = doc.id
+            student_data.append(data)
+        
+        if not student_data:
+            st.info("No students have logged in yet.")
+        else:
+            st.metric("Total Students", len(student_data))
+            
+            for student in student_data:
+                with st.expander(f"👤 {student['email']} - Question {student.get('q_idx', 0) + 1}/{len(QUESTIONS)}"):
+                    st.write(f"**Current Progress:** Question {student.get('q_idx', 0) + 1} of {len(QUESTIONS)}")
+                    
+                    responses = student.get("responses", {})
+                    if responses:
+                        st.write("**Responses:**")
+                        for q_id, response in sorted(responses.items(), key=lambda x: int(x[0])):
+                            q = QUESTIONS_BY_ID.get(int(q_id))
+                            if q:
+                                st.markdown(f"**Q{q_id}: {q['section']}**")
+                                st.text_area(f"Response to Q{q_id}", value=response, height=100, disabled=True, key=f"view_{student['email']}_{q_id}")
+                    else:
+                        st.info("No responses yet")
 
 st.sidebar.markdown("---")
 st.sidebar.caption("Note: This tool summarizes concepts and prompts discussion. It does not reproduce the original note’s text.")
