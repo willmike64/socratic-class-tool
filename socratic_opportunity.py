@@ -746,29 +746,42 @@ if page == "Socratic Flow":
     st.title("Socratic Flow")
     st.caption("Step through a discussion sequence. Students type answers; Instructor mode shows prompts + exemplar answers.")
 
-    if "q_idx" not in st.session_state:
-        st.session_state.q_idx = 0
+    is_instructor = st.session_state.get("is_instructor", False)
+    
+    if is_instructor:
+        if "q_idx" not in st.session_state:
+            st.session_state.q_idx = 0
+        q_idx = st.session_state.q_idx
+    else:
+        q_idx = st.session_state.student_data.get("q_idx", 0)
+    
     total = len(QUESTIONS)
-    q = get_question_by_idx(st.session_state.q_idx)
+    q = get_question_by_idx(q_idx)
 
     colA, colB, colC = st.columns([1, 2, 1])
     with colA:
-        if st.button("⬅️ Prev", use_container_width=True, disabled=(st.session_state.q_idx == 0)):
-            st.session_state.q_idx -= 1
+        if st.button("⬅️ Prev", use_container_width=True, disabled=(q_idx == 0)):
+            if is_instructor:
+                st.session_state.q_idx -= 1
+            else:
+                st.session_state.student_data["q_idx"] = max(0, q_idx - 1)
+                db.collection("students").document(st.session_state.user_email).set(st.session_state.student_data)
             st.rerun()
     with colC:
-        if st.button("Next ➡️", use_container_width=True, disabled=(st.session_state.q_idx == total - 1)):
-            st.session_state.q_idx += 1
+        if st.button("Next ➡️", use_container_width=True, disabled=(q_idx == total - 1)):
+            if is_instructor:
+                st.session_state.q_idx += 1
+            else:
+                st.session_state.student_data["q_idx"] = min(total - 1, q_idx + 1)
+                db.collection("students").document(st.session_state.user_email).set(st.session_state.student_data)
             st.rerun()
 
-    st.progress((st.session_state.q_idx + 1) / total)
+    st.progress((q_idx + 1) / total)
     st.markdown(f"### Q{q['id']}: {q['section']}")
     st.markdown(q["q"])
 
     with st.expander("💭 Hint (optional)"):
         st.write(q["hint"])
-
-    is_instructor = st.session_state.get("is_instructor", False)
     
     if is_instructor:
         response = st.text_area("Student response (notes):", key=f"resp_{q['id']}", height=140, placeholder="Type what you'd say in class...")
@@ -780,6 +793,7 @@ if page == "Socratic Flow":
             if "responses" not in st.session_state.student_data:
                 st.session_state.student_data["responses"] = {}
             st.session_state.student_data["responses"][str(q['id'])] = response
+            st.session_state.student_data["q_idx"] = q_idx
             db.collection("students").document(st.session_state.user_email).set(st.session_state.student_data)
             st.success("✅ Progress saved!")
 
