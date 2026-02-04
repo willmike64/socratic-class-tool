@@ -41,7 +41,7 @@ if not st.session_state.authenticated:
         st.markdown('<div class="login-container">', unsafe_allow_html=True)
         st.markdown('💡')
         st.markdown('<div class="login-title">Socratic Class Tool</div>', unsafe_allow_html=True)
-        st.markdown('<div class="login-subtitle">Opportunity Identification & Evaluation</div>', unsafe_allow_html=True)
+        st.markdown('<div class="login-subtitle">Welcome to the online home of asking "but why?" until your startup idea either thrives or politely excuses itself. Opportunity Identification & Evaluation — now with 100% more critical thinking, 0% more certainty.</div>', unsafe_allow_html=True)
         
         email = st.text_input("📧 Email", placeholder="your.email@wisc.edu")
         password = st.text_input("🔒 Password", type="password", placeholder="Enter your password")
